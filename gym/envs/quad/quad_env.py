@@ -81,7 +81,7 @@ class QuadEnv(gym.Env):
     GOAL_POSITION = [25.0, 25.0]  # [m]
 
     # TODO(hayk): Make this dynamic
-    NUM_OBSTACLES = 0
+    NUM_OBSTACLES = 10
 
     MAX_ACCEL = np.array([10.0, 10.0])  # [m/s^2]
     MAX_VELOCITY = 10.0  # [m/s]
@@ -103,7 +103,8 @@ class QuadEnv(gym.Env):
         self.goal = Disk(x=self.GOAL_POSITION[0], y=self.GOAL_POSITION[1], r=self.GOAL_RADIUS)
 
         # Generate quad
-        self.quad = Quad(x=12.5, y=12.5)
+        self.quad_start = [5.0, 5.0]
+        self.quad = Quad(*self.quad_start)
 
         # Generate obstacles
         self.obstacles = [Obstacle() for _ in range(self.NUM_OBSTACLES)]
@@ -177,7 +178,7 @@ class QuadEnv(gym.Env):
 
     def _reset(self):
         # Start quad at rest at bottom left
-        self.quad.set_from_state(np.array([12.5, 12.5, 0.0, 0.0]))
+        self.quad.set_from_state(np.array([self.quad_start[0], self.quad_start[1], 0.0, 0.0]))
 
         self.randomize_obstacles()
 
@@ -189,7 +190,7 @@ class QuadEnv(gym.Env):
     def _get_obs(self):
         if self.NUM_OBSTACLES == 0:
             return self.quad.state()
-        return np.hstack([self.quad.state(), np.hstack([o.state() - self.quad.state()[:2] for o in self.obstacles])])
+        return np.hstack([self.quad.state(), np.hstack([o.state() for o in self.obstacles])])
 
     def _render(self, mode='human', close=False):
         if close:
