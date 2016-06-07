@@ -77,6 +77,12 @@ register(
     reward_threshold=-100
 )
 
+register(
+    id='Quad-v0',
+    entry_point='gym.envs.quad:QuadEnv',
+    timestep_limit=200,
+)
+
 # Box2d
 # ----------------------------------------
 
